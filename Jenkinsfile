@@ -15,7 +15,8 @@ def cmakeFlags = [
 ]
 
 node {
-    withEnv(["HOME=/workspace"]) {
+    cleanWs()
+    withEnv(["HOME=${workspace}"]) {
         stage("Fedora") {
             docker.image("usgsastro/isis-builder:fedora").inside("-v ${isisDataPath}:${isisDataPath}") {
                 stage ("Checkout") {
