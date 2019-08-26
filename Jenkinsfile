@@ -16,7 +16,7 @@ def cmakeFlags = [
 
 node {
     stage("Fedora") {
-        docker.image("usgsastro/isis-builder:fedora").inside("-v ${isisDataPath}:${isisDataPath}") {
+        docker.image("usgsastro/isis-builder:fedora").inside("-u conda -v ${isisDataPath}:${isisDataPath}") {
             stage ("Checkout") {
                 checkout scm
                 isisEnv.add("ISISROOT=${pwd()}/build")
@@ -37,7 +37,6 @@ node {
                 stage ("Build") {
                     dir("build") {
                         sh """
-                            # This is a comment
                             conda activate isis
                             cmake -GNinja ${cmakeFlags.join(' ')} ../isis
                             ninja -j4 install
