@@ -37,6 +37,7 @@ node {
                 stage ("Build") {
                     dir("build") {
                         sh """
+                            # This is a comment
                             conda activate isis
                             cmake -GNinja ${cmakeFlags.join(' ')} ../isis
                             ninja -j4 install
