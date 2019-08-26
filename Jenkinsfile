@@ -38,7 +38,7 @@ node {
                     stage ("Build") {
                         dir("build") {
                             sh """
-                                conda activate isis
+                                source activate isis
                                 cmake -GNinja ${cmakeFlags.join(' ')} ../isis
                                 ninja -j4 install
                             """
