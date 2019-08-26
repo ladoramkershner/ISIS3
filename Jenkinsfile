@@ -15,37 +15,39 @@ def cmakeFlags = [
 ]
 
 node {
-    stage("Fedora") {
-        docker.image("usgsastro/isis-builder:fedora").inside("-u conda -v ${isisDataPath}:${isisDataPath}") {
-            stage ("Checkout") {
-                checkout scm
-                isisEnv.add("ISISROOT=${pwd()}/build")
-                cmakeFlags.add("-DCMAKE_INSTALL_PREFIX=${pwd()}/install")
-            }
-
-            stage("Create environment") {
-                sh '''
-                    # Use the conda cache running on the Jenkins host
-                    conda config --set channel_alias http://dmz-jenkins.wr.usgs.gov
-                    conda config --set always_yes True
-                    conda create -n isis python=3
-                    conda env update -n isis -f environment.yml --prune
-                '''
-            }
-            
-            withEnv(isisEnv) {
-                stage ("Build") {
-                    dir("build") {
-                        sh """
-                            conda activate isis
-                            cmake -GNinja ${cmakeFlags.join(' ')} ../isis
-                            ninja -j4 install
-                        """
-                    }
+    withEnv(["HOME=${workspace}"]) {
+        stage("Fedora") {
+            docker.image("usgsastro/isis-builder:fedora").inside("-v ${isisDataPath}:${isisDataPath}") {
+                stage ("Checkout") {
+                    checkout scm
+                    isisEnv.add("ISISROOT=${pwd()}/build")
+                    cmakeFlags.add("-DCMAKE_INSTALL_PREFIX=${pwd()}/install")
                 }
 
-                stage("Test") {
-                    sh '''echo Not Implemented'''
+                stage("Create environment") {
+                    sh '''
+                        # Use the conda cache running on the Jenkins host
+                        conda config --set channel_alias http://dmz-jenkins.wr.usgs.gov
+                        conda config --set always_yes True
+                        conda create -n isis python=3
+                        conda env update -n isis -f environment.yml --prune
+                    '''
+                }
+                
+                withEnv(isisEnv) {
+                    stage ("Build") {
+                        dir("build") {
+                            sh """
+                                conda activate isis
+                                cmake -GNinja ${cmakeFlags.join(' ')} ../isis
+                                ninja -j4 install
+                            """
+                        }
+                    }
+
+                    stage("Test") {
+                        sh '''echo Not Implemented'''
+                    }
                 }
             }
         }
