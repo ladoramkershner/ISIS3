@@ -32,12 +32,8 @@ node {
                     conda config --set channel_alias http://dmz-jenkins.wr.usgs.gov
                     conda config --set always_yes True
                     conda create -n isis python=3
+                    conda env update -n isis -f environment.yml --prune
                 '''
-                if (env.OS.toLowerCase() == "centos") {
-                    sh 'conda env update -n isis -f environment.yml --prune'
-                } else {
-                    sh 'conda env update -n isis -f environment_gcc4.yml --prune'
-                }
             }
             
             withEnv(isisEnv) {
