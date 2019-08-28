@@ -1,6 +1,6 @@
 // vim: ft=groovy
 
-def isisDataPath = '/isisData/'
+def isisDataPath = '/isisData'
 def isisTestDataPath = "${isisDataPath}/base/testData"
 
 def isisEnv = [
@@ -39,6 +39,7 @@ node {
                     stage ("Build") {
                         dir("build") {
                             sh """
+                                # Webhook test comment
                                 source activate isis
                                 cmake -GNinja ${cmakeFlags.join(' ')} ../isis
                                 ninja -j4 install
