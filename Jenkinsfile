@@ -1,32 +1,26 @@
 // vim: ft=groovy
 
-void setBuildStatus(String message, String state) {
-  step([
-      $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/"],
-      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-  ]);
-}
-
 node {
-    parallel {
-        stage('CentOS') {
-            build 'ISIS Builds/CentOS'
+    parallel 
+        'centos': {
+            stage('CentOS') {
+                build 'ISIS Builds/CentOS'
+            },
+        },
+        'debian': {
+            stage('Debian') {
+                build 'ISIS Builds/Debian'
+            },
+        },
+        'fedora': {
+            stage('Fedora') {
+                build 'ISIS Builds/Fedora'
+            },
+        },
+        'ubuntu': {
+            stage('Ubuntu') {
+                build 'ISIS Builds/Ubuntu'
+            },
         }
-
-        stage('Debian') {
-            build 'ISIS Builds/Debian'
-        }
-        
-        stage('Fedora') {
-            build 'ISIS Builds/Fedora'
-        }
-
-        stage('Ubuntu') {
-            build 'ISIS Builds/Ubuntu'
-        }
-    }
 }
 
