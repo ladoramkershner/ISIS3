@@ -1,7 +1,7 @@
 // vim: ft=groovy
 
 node {
-    parallel 
+    parallel(
         'centos': {
             stage('CentOS') {
                 build 'ISIS Builds/CentOS'
@@ -22,5 +22,6 @@ node {
                 build 'ISIS Builds/Ubuntu'
             },
         }
+    )
 }
 
